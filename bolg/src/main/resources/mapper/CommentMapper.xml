@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xh.blog.dao.CommentDao">
+
+    <resultMap id="BaseResultMap" type="com.xh.blog.domain.Comment">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="createDate" column="create_date" jdbcType="BIGINT"/>
+            <result property="articleId" column="article_id" jdbcType="INTEGER"/>
+            <result property="authorId" column="author_id" jdbcType="BIGINT"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="toUid" column="to_uid" jdbcType="BIGINT"/>
+            <result property="level" column="level" jdbcType="VARCHAR"/>
+    </resultMap>
+
+</mapper>

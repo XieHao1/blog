@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xh.blog.dao.ArticleDao">
+
+    <resultMap id="BaseResultMap" type="com.xh.blog.domain.Article">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="commentCounts" column="comment_counts" jdbcType="INTEGER"/>
+            <result property="createDate" column="create_date" jdbcType="BIGINT"/>
+            <result property="summary" column="summary" jdbcType="VARCHAR"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="viewCounts" column="view_counts" jdbcType="INTEGER"/>
+            <result property="weight" column="weight" jdbcType="INTEGER"/>
+            <result property="authorId" column="author_id" jdbcType="BIGINT"/>
+            <result property="bodyId" column="body_id" jdbcType="BIGINT"/>
+            <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="newArchives" resultType="com.xh.blog.vo.Archives">
+        select from_unixtime(create_date/1000,'%Y') as year,
+               from_unixtime(create_date/1000,'%m') as month,
+               count(*) as count
+        from xh_article
+        group by year,month
+    </select>
+
+    <!-- Long categoryId, Long tagId, String year, String month-->
+    <select id="findArticles" resultMap="BaseResultMap">
+        select * from xh_article
+        <where>
+            <if test="categoryId != null">
+                category_id = #{categoryId}
+            </if>
+            <if test="tagId != null">
+                and id in (select article_id from xh_article_tag where tag_id = #{tagId})
+            </if>
+            <!--
+                在动态sql中，用and进行条件的连接
+                在mybatis-plus中没有与from_unixtime相关的函数
+                需要使用原生的mybatis
+            -->
+            <if test="year != null and year.length>0 and month !=null and month.length>0">
+                and (from_unixtime(create_date/1000,'%Y') = #{year}
+                      and from_unixtime(create_date/1000,'%m') = #{month})
+            </if>
+        </where>
+        order by weight,create_date Desc
+    </select>
+
+</mapper>
